@@ -22,6 +22,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import Badge from '@mui/material/Badge'
 import LoyaltyIcon from '@mui/icons-material/Loyalty'
 import Player from './components/Player'
+import Toast from './components/Toast'
 // import { Link } from 'react-router-dom'
 
 const drawerWidth = 140
@@ -128,6 +129,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Player />
+      <Toast />
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="fixed" open={open}>

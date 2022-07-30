@@ -25,10 +25,15 @@ interface MediaProps {
 const SkeletonMedia = () => {
   return (
     <Box sx={{ marginRight: 0.5 }}>
-      <Skeleton variant="rectangular" sx={{ aspectRatio: 210 / 118 }} />
+      <Skeleton
+        variant="rectangular"
+        sx={{ width: '100%', height: 118, aspectRatio: 210 / 118 }}
+      />
       <Box sx={{ pt: 0.5 }}>
         <Skeleton />
+        <Skeleton />
         <Skeleton width="60%" />
+        <Skeleton />
       </Box>
     </Box>
   )
