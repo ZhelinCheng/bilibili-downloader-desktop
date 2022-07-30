@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { useEffect } from 'react'
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import MuiDrawer from '@mui/material/Drawer'
@@ -23,6 +23,7 @@ import Badge from '@mui/material/Badge'
 import LoyaltyIcon from '@mui/icons-material/Loyalty'
 import Player from './components/Player'
 import Toast from './components/Toast'
+import { getName } from '@tauri-apps/api/app';
 // import { Link } from 'react-router-dom'
 
 const drawerWidth = 140
@@ -125,6 +126,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const handleDrawerClose = () => {
     setOpen(false)
   }
+
+  useEffect(() => {
+    getName().then(name => { console.log(name) });
+  }, [open])
 
   return (
     <>
