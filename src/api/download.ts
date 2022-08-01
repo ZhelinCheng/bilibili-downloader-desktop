@@ -183,3 +183,84 @@ export async function getUpInfo(mid: string): Promise<UpInfoBase> {
     face: '',
   }
 }
+
+/* const quality = {
+  120: '超清 4K',
+  116: '高清 1080P60',
+  80: '高清 1080P',
+  64: '高清 720P',
+  32: '清晰 480P',
+  16: '流畅 360P',
+}
+ */
+interface VideoUrl {
+  quality: string
+  durl: Array<{ url: string; size: number }>
+}
+
+/**
+ * 获取视频下载地址
+ * @param bvid BVID
+ * @returns 视频下载信息
+ */
+export async function getVideoUrls(bvid: string, preview = false) {
+  const res = await rq<
+    Array<{
+      dimension: { width: number; height: number }
+      first_frame: string
+      cid: string
+      part: string
+    }>
+  >(`https://api.bilibili.com/x/player/pagelist`, {
+    method: 'GET',
+    query: {
+      bvid,
+    },
+  })
+
+  if (!(res?.code === 0 && res?.data)) {
+    return []
+  }
+  const { data } = res
+
+  const urls: any[] = []
+
+  data.forEach(({ cid }) => {
+    urls.push(
+      rq<VideoUrl>(`https://api.bilibili.com/x/player/playurl`, {
+        method: 'GET',
+        query: {
+          bvid,
+          cid: cid.toString(),
+          qn: '120',
+          fourk: '1',
+          platform: preview ? 'html5' : '',
+        },
+      })
+    )
+  })
+
+  const playUrls = await Promise.all(urls)
+
+  return playUrls.map(({ data: { quality, durl } }, index) => {
+    const { url, size } = durl[0]
+    const {
+      part,
+      first_frame,
+      dimension: { width, height },
+    } = data[index]
+
+    const maxVal = width > height ? width : height
+    const prop = 500 / maxVal
+
+    return {
+      pic: first_frame,
+      quality,
+      url,
+      size,
+      title: part,
+      width: Math.floor(prop * width),
+      height: Math.floor(prop * height),
+    }
+  })
+}

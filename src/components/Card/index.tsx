@@ -8,16 +8,21 @@ import FourKIcon from '@mui/icons-material/FourK'
 import styles from './index.module.scss'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import DoDisturbAltIcon from '@mui/icons-material/DoDisturbAlt'
+import { emitter } from '../../utils'
+import { getVideoUrls } from '../../api/download'
 
 interface MediaProps {
   loading?: boolean
+  bvid: string
   onPreview?: () => void
   onDownload?: () => void
   onSubscribe?: () => void
   item: {
     src: string
     title: string
-    clarity: string
+    clarity?: string
+    length?: string
+    views: number
     createdAt: string
   }
 }
@@ -39,9 +44,15 @@ const SkeletonMedia = () => {
   )
 }
 
+async function videoPreview(bvid: string) {
+  const videosUrl = await getVideoUrls(bvid, true)
+  emitter.emit('video-preview', videosUrl)
+}
+
 function WorkMedia({
   loading = false,
   item,
+  bvid,
   onDownload,
   onPreview,
   onSubscribe,
@@ -58,19 +69,19 @@ function WorkMedia({
           color="primary"
           icon={<FourKIcon />}
           size="small"
-          label="1080P"
+          label={item.clarity || item.length}
           className={styles.chip}
         />
       </Box>
       <Box>
-        <Typography gutterBottom variant="body2">
+        <Typography noWrap gutterBottom variant="body2">
           {item.title}
         </Typography>
         {/* <Typography variant="caption" color="text.secondary">
           37度的天也阻挡不了满满的元气！
         </Typography> */}
         <Typography display="block" variant="caption" color="text.secondary">
-          3789 views · 1.5 hours ago
+          {item.views} views · {item.createdAt}
         </Typography>
         <Stack
           sx={{
@@ -81,7 +92,10 @@ function WorkMedia({
           direction="row"
         >
           <Button
-            onClick={onPreview}
+            onClick={() => {
+              videoPreview(bvid)
+              onPreview && onPreview()
+            }}
             size="small"
             variant="text"
             endIcon={<PlayArrowIcon />}

@@ -34,6 +34,7 @@
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.9.2",
     "@tauri-apps/api": "^1.0.2",
+    "dayjs": "^1.11.4",
     "dplayer": "^1.26.0",
     "eventemitter3": "^4.0.7",
     "normalize.css": "^8.0.1",
